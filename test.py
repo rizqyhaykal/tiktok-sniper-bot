@@ -16,7 +16,7 @@ headers = {
 
 last_followers = None
 target_reached = False
-last_update_id = None
+last_update_id = 0
 
 
 def send_telegram(message):
@@ -31,7 +31,7 @@ def send_telegram(message):
     requests.post(telegram_url, data=payload)
 
 
-def check_stop_command():
+def initialize_updates():
 
     global last_update_id
 
@@ -39,28 +39,41 @@ def check_stop_command():
 
     response = requests.get(updates_url).json()
 
+    if "result" in response and len(response["result"]) > 0:
+
+        last_update_id = response["result"][-1]["update_id"]
+
+
+def check_stop_command():
+
+    global last_update_id
+
+    updates_url = (
+        f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates?offset={last_update_id + 1}"
+    )
+
+    response = requests.get(updates_url).json()
+
     if "result" in response:
 
         for item in response["result"]:
 
-            update_id = item["update_id"]
+            last_update_id = item["update_id"]
 
-            if last_update_id is None or update_id > last_update_id:
+            try:
 
-                last_update_id = update_id
+                text = item["message"]["text"]
 
-                try:
+                if text.upper() == "STOP":
+                    return True
 
-                    text = item["message"]["text"]
-
-                    if text.upper() == "STOP":
-                        return True
-
-                except:
-                    pass
+            except:
+                pass
 
     return False
 
+
+initialize_updates()
 
 while True:
 
