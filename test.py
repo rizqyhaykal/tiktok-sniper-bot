@@ -1,10 +1,9 @@
 import requests
 import re
 import time
+import os
 
 username = "celanasepuluhrebu"
-
-import os
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
@@ -31,6 +30,7 @@ def send_telegram(message):
 
 
 def check_stop_command():
+
     updates_url = f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates"
 
     response = requests.get(updates_url).json()
@@ -54,6 +54,7 @@ def check_stop_command():
 while True:
 
     try:
+
         response = requests.get(url, headers=headers)
 
         html = response.text
@@ -68,7 +69,7 @@ while True:
 
             print(f"[{current_time}] Followers: {followers}")
 
-            if last_followers and followers != last_followers:
+            if last_followers != followers and last_followers is not None:
 
                 alert = f"🚨 FOLLOWER COUNT CHANGED 🚨\n\n{last_followers} → {followers}"
 
@@ -76,29 +77,29 @@ while True:
 
                 send_telegram(alert)
 
-                if int(followers) >= 76 and not target_reached:
+            if int(followers) >= 76 and not target_reached:
 
-                    print("🚨🚨 TARGET 2 MILLION REACHED 🚨🚨")
+                print("🚨🚨 TARGET REACHED 🚨🚨")
 
-                    while True:
+                while True:
 
-                        send_telegram(
-                            "🚨🚨 FOLLOWERS SUDAH 2 JUTA 🚨🚨\n\nBURUAN SCREENSHOT DAN DM SEKARANG!\n\nKetik STOP untuk menghentikan spam."
-                        )
+                    send_telegram(
+                        "🚨🚨 FOLLOWERS TARGET TERCAPAI 🚨🚨\n\nBURUAN SCREENSHOT DAN DM SEKARANG!\n\nKetik STOP untuk menghentikan spam."
+                    )
 
-                        print("SPAM SENT")
+                    print("SPAM SENT")
 
-                        time.sleep(1)
+                    time.sleep(1)
 
-                        if check_stop_command():
+                    if check_stop_command():
 
-                            send_telegram("✅ Spam dihentikan.")
+                        send_telegram("✅ Spam dihentikan.")
 
-                            print("SPAM STOPPED")
+                        print("SPAM STOPPED")
 
-                            break
+                        break
 
-                    target_reached = True
+                target_reached = True
 
             last_followers = followers
 
@@ -106,6 +107,7 @@ while True:
             print("Follower count not found")
 
     except Exception as e:
+
         print("ERROR:", e)
 
     time.sleep(4)
