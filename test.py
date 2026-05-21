@@ -4,8 +4,10 @@ import time
 
 username = "arthaadaa"
 
-BOT_TOKEN = "8919289706:AAGoy7ZOiKN0mQVJbmRzprab38vhVjrv7Zc"
-CHAT_ID = "8428553824"
+import os
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
 
 url = f"https://www.tiktok.com/@{username}"
 
