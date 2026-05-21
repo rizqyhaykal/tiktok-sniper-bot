@@ -3,7 +3,7 @@ import re
 import time
 import os
 
-username = "arthaadaa"
+username = "celanasepuluhrebu"
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
@@ -17,6 +17,7 @@ headers = {
 last_followers = None
 target_reached = False
 last_update_id = 0
+current_followers = "Unknown"
 
 
 def send_telegram(message):
@@ -44,9 +45,10 @@ def initialize_updates():
         last_update_id = response["result"][-1]["update_id"]
 
 
-def check_stop_command():
+def check_commands():
 
     global last_update_id
+    global current_followers
 
     updates_url = (
         f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates?offset={last_update_id + 1}"
@@ -65,12 +67,17 @@ def check_stop_command():
                 text = item["message"]["text"]
 
                 if text.upper() == "STOP":
-                    return True
+                    return "STOP"
+
+                if text.lower() == "/followers":
+                    send_telegram(
+                        f"📊 Followers sekarang: {current_followers}"
+                    )
 
             except:
                 pass
 
-    return False
+    return None
 
 
 initialize_updates()
@@ -89,6 +96,8 @@ while True:
 
             followers = match.group(1)
 
+            current_followers = followers
+
             current_time = time.strftime("%H:%M:%S")
 
             print(f"[{current_time}] Followers: {followers}")
@@ -101,7 +110,7 @@ while True:
 
                 send_telegram(alert)
 
-            if int(followers) >= 2000000 and not target_reached:
+            if int(followers) >= 76 and not target_reached:
 
                 print("🚨🚨 TARGET REACHED 🚨🚨")
 
@@ -115,7 +124,9 @@ while True:
 
                     time.sleep(1)
 
-                    if check_stop_command():
+                    command = check_commands()
+
+                    if command == "STOP":
 
                         send_telegram("✅ Spam dihentikan.")
 
@@ -126,6 +137,8 @@ while True:
                 target_reached = True
 
             last_followers = followers
+
+            check_commands()
 
         else:
             print("Follower count not found")
