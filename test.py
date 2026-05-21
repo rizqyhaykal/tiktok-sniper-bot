@@ -2,7 +2,7 @@ import requests
 import re
 import time
 
-username = "arthaadaa"
+username = "celanasepuluhrebu"
 
 import os
 
@@ -76,7 +76,7 @@ while True:
 
                 send_telegram(alert)
 
-                if int(followers) >= 2000000 and not target_reached:
+                if int(followers) >= 76 and not target_reached:
 
                     print("🚨🚨 TARGET 2 MILLION REACHED 🚨🚨")
 
