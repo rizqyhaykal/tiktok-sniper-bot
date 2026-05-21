@@ -3,7 +3,7 @@ import re
 import time
 import os
 
-username = "celanasepuluhrebu"
+username = "arthaadaa"
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
@@ -110,7 +110,7 @@ while True:
 
                 send_telegram(alert)
 
-            if int(followers) >= 76 and not target_reached:
+            if int(followers) >= 2000000 and not target_reached:
 
                 print("🚨🚨 TARGET REACHED 🚨🚨")
 
