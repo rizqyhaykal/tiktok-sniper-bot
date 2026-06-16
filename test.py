@@ -46,11 +46,9 @@ def get_tokcounter_followers():
             timeout=10
         )
 
-        print("TOKCOUNTER STATUS:", response.status_code)
-        print("TOKCOUNTER RESPONSE:", response.text[:2000])
         data = response.json()
 
-        return str(data.get("followers", "Unknown"))
+        return str(data["stats"]["followers"])
 
     except Exception as e:
 
