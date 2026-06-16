@@ -17,7 +17,9 @@ headers = {
 last_followers = None
 target_reached = False
 last_update_id = 0
+
 current_followers = "Unknown"
+current_tokcounter_followers = "Unknown"
 
 
 def send_telegram(message):
@@ -30,6 +32,26 @@ def send_telegram(message):
     }
 
     requests.post(telegram_url, data=payload)
+
+
+def get_tokcounter_followers():
+
+    try:
+
+        response = requests.get(
+            f"https://tiktok-api.tokcounter.com/user/data/{username}",
+            timeout=10
+        )
+
+        data = response.json()
+
+        return str(data.get("followers", "Unknown"))
+
+    except Exception as e:
+
+        print("TOKCOUNTER ERROR:", e)
+
+        return "Unknown"
 
 
 def initialize_updates():
@@ -49,6 +71,7 @@ def check_commands():
 
     global last_update_id
     global current_followers
+    global current_tokcounter_followers
 
     updates_url = (
         f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates?offset={last_update_id + 1}"
@@ -70,8 +93,11 @@ def check_commands():
                     return "STOP"
 
                 if text.lower() == "/followers":
+
                     send_telegram(
-                        f"📊 Followers sekarang: {current_followers}"
+                        f"📊 FOLLOWERS SEKARANG\n\n"
+                        f"TikTok Web: {current_followers}\n"
+                        f"TokCounter: {current_tokcounter_followers}"
                     )
 
             except:
@@ -96,15 +122,26 @@ while True:
 
             followers = match.group(1)
 
+            tokcounter_followers = get_tokcounter_followers()
+
             current_followers = followers
+            current_tokcounter_followers = tokcounter_followers
 
             current_time = time.strftime("%H:%M:%S")
 
-            print(f"[{current_time}] Followers: {followers}")
+            print(
+                f"[{current_time}] "
+                f"TikTok={followers} | "
+                f"TokCounter={tokcounter_followers}"
+            )
 
             if last_followers != followers and last_followers is not None:
 
-                alert = f"🚨 FOLLOWER COUNT CHANGED 🚨\n\n{last_followers} → {followers}"
+                alert = (
+                    f"🚨 FOLLOWER COUNT CHANGED 🚨\n\n"
+                    f"TikTok Web: {last_followers} → {followers}\n"
+                    f"TokCounter: {tokcounter_followers}"
+                )
 
                 print(alert)
 
@@ -117,7 +154,9 @@ while True:
                 while True:
 
                     send_telegram(
-                        "🚨🚨 FOLLOWERS TARGET TERCAPAI 🚨🚨\n\nBURUAN SCREENSHOT DAN DM SEKARANG!\n\nKetik STOP untuk menghentikan spam."
+                        "🚨🚨 FOLLOWERS TARGET TERCAPAI 🚨🚨\n\n"
+                        "BURUAN SCREENSHOT DAN DM SEKARANG!\n\n"
+                        "Ketik STOP untuk menghentikan spam."
                     )
 
                     print("SPAM SENT")
