@@ -47,8 +47,7 @@ def get_tokcounter_followers():
         )
 
         print("TOKCOUNTER STATUS:", response.status_code)
-        print("TOKCOUNTER RESPONSE:", response.text[:300])
-
+        print("TOKCOUNTER RESPONSE:", response.text[:2000])
         data = response.json()
 
         return str(data.get("followers", "Unknown"))
