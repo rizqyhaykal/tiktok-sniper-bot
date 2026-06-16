@@ -40,8 +40,14 @@ def get_tokcounter_followers():
 
         response = requests.get(
             f"https://tiktok-api.tokcounter.com/user/data/{username}",
+            headers={
+                "User-Agent": "Mozilla/5.0"
+            },
             timeout=10
         )
+
+        print("TOKCOUNTER STATUS:", response.status_code)
+        print("TOKCOUNTER RESPONSE:", response.text[:300])
 
         data = response.json()
 
@@ -52,7 +58,6 @@ def get_tokcounter_followers():
         print("TOKCOUNTER ERROR:", e)
 
         return "Unknown"
-
 
 def initialize_updates():
 
